@@ -1,0 +1,52 @@
+The data processing workflow typically involves data acquisition, storage, transformation and analysis. Up to now, AWS has offered a powerful combination of services to support this critical process:
+•	Data acquisition (Amazon Kinesis, Amazon Kinesis Firehose, AWS Snowball, AWS DMS)
+•	Data storage (Amazon S3, Amazon DynamoDB, Amazon RDS, Amazon Redshift, Amazon Elasticache)
+•	Data analysis (Amazon Quicksight)
+Recently AWS rounded out its data processing services with AWS Glue, a fully managed extract, transform and load (ETL) service to help customers build data warehouses or move and refactor data from one data store to another.
+As a “serverless” offering, AWS Glue makes it easier and more cost effective for customers to:
+•	Build, configure and manage their ETL solutions
+•	Connect with different data sources
+•	Tune performance
+•	Maximize capacity usage across multiple environments
+
+AWS Glue Platform and Components
+AWS Glue is built on top of Apache Spark, which provides the underlying engine to process data records and scale to provide high throughput, all of which is transparent to AWS Glue users.
+The new service has three main components:
+1.	Data Catalog—A common location for storing, accessing and managing metadata information such as databases, tables, schemas and partitions. Creating an ETL job to organize, cleanse, validate and transform the data in AWS Glue is a simple process. When setting up the connections for data sources, “intelligent” crawlers infer the schema/objects within these data sources and create the tables with metadata in AWS Glue Data Catalog.
+2.	ETL Engine—Once the metadata is available in the catalog, data analysts can create an ETL job by selecting source and target data stores from the AWS Glue Data Catalog. It’s not necessary to know the target schema in advance as it will be provided by the catalog. The next step is to define an ETL job for AWS Glue to generate the required PySpark code. Developers can customize this code based on validation and transformation requirements.
+3.	Scheduler—Once the ETL job is created, it can be scheduled to run on-demand, at a specific time or upon completion of another job. AWS Glue provides a flexible and robust scheduler that can even retry the failed jobs.
+AWS Glue Use Cases
+By decoupling components like AWS Glue Data Catalog, ETL engine and a job scheduler, AWS Glue can be used in a variety of additional ways. Examples include data exploration, data export, log aggregation and data catalog.
+One use case for AWS Glue involves building an analytics platform on AWS. As a part of its journey to cloud, an eCommerce company successfully moves its applications and databases to AWS Cloud. One of the major workloads is Oracle databases underlying their custom applications. The company moves to Amazon Aurora (PostgreSQL) relational database service (RDS) using AWS Data Migration Service (DMS) and AWS Schema Conversion Tool (SCT).
+
+After doing the cut-over to Amazon Aurora, the web application is migrated to Amazon EC2 connecting to an Amazon Aurora cluster. Next, the company develops a proof of concept to convert from OLTP model to OLAP model using AWS Glue. This can be done by performing an ETL on Aurora Read Replica using AWS Glue and storing the transformed data into Amazon Redshift. The figure below shows the overall architecture that the company is moving toward
+
+The company is also evaluating Amazon EMR as a managed Hadoop platform. To perform big data processing on data coming from Amazon Aurora and other data sources including Amazon S3, the company would not have to maintain an Apache Hive metastore. AWS Glue could populate the AWS Glue Data Catalog with metadata from various data sources using in-built crawlers. Once AWS Glue Data Catalog is populated with metadata, Amazon EMR would be able to access the data from various data sources through this metastore.
+In a second use case, a company has been using Apache Spark on a Hadoop cluster configured to run on Amazon EC2. The company’s data is stored in various data stores:
+
+1.	Financial data from an ERP system in Oracle DB
+2.	Exported Sales data in CSV files in Amazon S3 bucket
+3.	Custom built point of sales system uses MS SQL Server as backend.
+Currently, ETL jobs running on the Hadoop cluster join data from multiple sources, filter and transform the data, and store it in data sinks such as Amazon Redshift and Amazon S3. The same Hadoop cluster is used for batch processing and machine learning on data coming from other sources such as web application logs and cookies, device data, social media content, etc.
+However, using Apache Spark as a fast data processing solution on a self-managed Apache Hadoop cluster requires the company to spend considerable time and resources to maintain on Amazon EC2. To overcome this, the company is working to move its PySpark ETL code to AWS Glue and evaluating Amazon EMR for big data (batch) processing and machine learning.
+
+Benefits:
+
+Moving ETL processing to AWS Glue can provide companies with multiple benefits, including no server maintenance, cost savings by avoiding over-provisioning or under-provisioning resources, support for data sources including easy integration with Oracle and MS SQL data sources, and AWS Lambda integration.
+In addition, AWS Glue is integrated with other AWS services such as Amazon Athena, Amazon Redshift Spectrum, and AWS Identity and Access Management. Intelligent crawlers are available out of the box for many AWS services to infer the schema automatically. Customers can write their own classifiers to customize the crawler behavior.
+Connections to the following file-based and relational data stores are supported out of the box:
+•	Amazon Simple Storage Service (Amazon S3)
+•	Amazon Redshift
+•	Amazon Relational Database Service (MySQL, PostgreSQL, Aurora, MSSQL, Oracle and MariaDB)
+•	JDBC (accessible from VPC)
+
+Considerations:
+
+•	AWS Glue does not directly support crawlers in on-premises data sources.
+•	For data sources not currently supported, customers can use Boto3 (preinstalled in ETL environment) to connect to these services using standard API calls through Python. AWS might make connectors for more data sources available in future.
+•	AWS Glue is available in us-east-1, us-east-2 and us-west-2 region as of October 2017.
+•	As of October 2017, Job Bookmarks functionality is only supported for Amazon S3 when using the Glue DynamicFrame API.
+•	AWS Glue Data Catalog is highly recommended but is optional. If customers do not want to use AWS Glue Data Catalog and just do the ETL, that would work, too
+
+
+
